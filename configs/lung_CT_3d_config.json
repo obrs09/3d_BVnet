@@ -11,6 +11,7 @@
     "weights_path": null,
     "predict_dir": "toy_predict_3d",
     "images_dir": "toy_images_3d",
+    "data_name": "organmnist3d",
     
     "norm": true,
     "step": 3,
@@ -34,7 +35,7 @@
     "initial_epoch": 0,
     "initial_learning_rate": 0.0001,
     "lr_decay_start_epoch": 10,
-    "batch_size": 2,
+    "batch_size": 16,
     "num_gpus": 1,
     "mc_samples": 48,
     "border_trim": 0.1,
