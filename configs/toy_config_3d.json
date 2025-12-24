@@ -39,5 +39,8 @@
     "mc_samples": 48,
     "border_trim": 0.1,
     "lower_percentile": 30,
-    "upper_percentile": 70
+    "upper_percentile": 70,
+    "train_quan_type": "float32",
+    "test_quan_type": "float32",
+    "load_model_path": null
 }

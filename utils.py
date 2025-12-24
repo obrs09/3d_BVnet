@@ -10,6 +10,55 @@ from torch.distributions import Normal, Independent
 ex = Experiment()
 ex.add_config("configs/toy_config.json")
 
+
+# ==================== Prediction Functions ====================
+
+@torch.no_grad()
+def predict_cpu(dataloader, model, laplace=False):
+    """Predict on CPU."""
+    import time
+    py = []
+    idx = 0
+    
+    for x, _ in dataloader:
+        time_start = time.time()
+        if laplace:
+            py.append(model(x))
+            time_end = time.time()
+            print(f'idx {idx}, time {time_end - time_start:.4f}s')
+            idx += 1
+        else:
+            py.append(torch.softmax(model(x), dim=-1))
+
+    return torch.cat(py).cpu().numpy()
+
+
+@torch.no_grad()
+def predict_gpu(dataloader, model, laplace=False):
+    """Predict on GPU."""
+    py = []
+
+    for x, _ in dataloader:
+        if laplace:
+            py.append(model(x.cuda())[0])
+        else:
+            py.append(torch.softmax(model(x.cuda())[0], dim=-1))
+
+    return torch.cat(py).cpu().numpy()
+
+
+@ex.capture
+def schedule(epoch, initial_learning_rate, lr_decay_start_epoch):
+    """Defines exponentially decaying learning rate."""
+    import math
+    if epoch < lr_decay_start_epoch:
+        return initial_learning_rate
+    else:
+        return initial_learning_rate * math.exp((10 * initial_learning_rate) * (lr_decay_start_epoch - epoch))
+
+
+# ==================== Utility Functions ====================
+
 def round_down(num, factor):
     """Rounds num to next lowest multiple of factor."""
     return (num // factor) * factor
